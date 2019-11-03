@@ -2,13 +2,13 @@
 #define SVELANG_TOKEN_H
 
 enum token_type {
-	EndOfLine,
-	EndOfProgram,
-	Unknown,
-	Number,
-	Multiplication,
-	Plus,
-	Minus
+	EOL, // End of line
+	EOP, // End of program
+	UNKNOWN,
+	NUMBER,
+	MULTIPLICATION,
+	PLUS,
+	MINUS
 };
 
 struct token {

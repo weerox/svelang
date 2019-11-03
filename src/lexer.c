@@ -90,20 +90,20 @@ struct token lexer_next(struct lexer *lexer) {
 	}
 
 	if (newline) {
-		token.type = EndOfLine;
+		token.type = EOL;
 	} else if (feof(lexer->fp)) {
-		token.type = EndOfProgram;
+		token.type = EOP;
 	} else if (number) {
-		token.type = Number;
+		token.type = NUMBER;
 		token.value = t;
 	} else if (strcmp(t, "plus") == 0) {
-		token.type = Plus;
+		token.type = PLUS;
 	} else if (strcmp(t, "minus") == 0) {
-		token.type = Minus;
+		token.type = MINUS;
 	} else if (strcmp(t, "gånger") == 0) {
-		token.type = Multiplication;
+		token.type = MULTIPLICATION;
 	} else {
-		token.type = Unknown;
+		token.type = UNKNOWN;
 		token.value = t;
 	}
 
