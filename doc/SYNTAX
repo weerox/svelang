@@ -1,0 +1,11 @@
+; Unless otherwise noted, 1*SP is placed between all rules
+
+program = *(expression LF)
+expression = term *((PLUS / MINUS) term)
+term = factor *(MULTIPLICATION factor)
+factor = number
+number = 1*DIGIT
+
+PLUS = "plus"
+MINUS = "minus"
+MULTIPLICATION = "gånger"
