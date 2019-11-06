@@ -124,6 +124,10 @@ struct token lexer_peek(struct lexer *lexer) {
 	return token;
 }
 
+void lexer_consume(struct lexer *lexer) {
+	lexer_next(lexer);
+}
+
 void lexer_free(struct lexer *lexer) {
 	fclose(lexer->fp);
 	free(lexer);
