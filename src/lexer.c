@@ -110,6 +110,20 @@ struct token lexer_next(struct lexer *lexer) {
 	return token;
 }
 
+struct token lexer_peek(struct lexer *lexer) {
+	long l = ftell(lexer->fp);
+	int line = lexer->line;
+	int column = lexer->column;
+
+	struct token token = lexer_next(lexer);
+
+	fseek(lexer->fp, l, SEEK_SET);
+	lexer->line = line;
+	lexer->column = column;
+
+	return token;
+}
+
 void lexer_free(struct lexer *lexer) {
 	fclose(lexer->fp);
 	free(lexer);

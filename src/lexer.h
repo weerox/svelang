@@ -13,6 +13,7 @@ struct lexer {
 
 struct lexer *lexer_new(char *file);
 struct token lexer_next(struct lexer *lexer);
+struct token lexer_peek(struct lexer *lexer);
 void lexer_free(struct lexer *lexer);
 
 #endif /* SVELANG_LEXER_H */
