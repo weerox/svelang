@@ -95,7 +95,6 @@ struct token lexer_next(struct lexer *lexer) {
 		token.type = EOP;
 	} else if (number) {
 		token.type = NUMBER;
-		token.value = t;
 	} else if (strcmp(t, "plus") == 0) {
 		token.type = PLUS;
 	} else if (strcmp(t, "minus") == 0) {
@@ -104,8 +103,10 @@ struct token lexer_next(struct lexer *lexer) {
 		token.type = MULTIPLICATION;
 	} else {
 		token.type = UNKNOWN;
-		token.value = t;
 	}
+
+	if (token.type != EOL && token.type != EOP)
+		token.value = t;
 
 	return token;
 }
