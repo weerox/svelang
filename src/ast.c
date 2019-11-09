@@ -4,6 +4,24 @@
 #include "ast.h"
 #include "lexer.h"
 
+struct ast_node *ast_number_new(int number) {
+	struct ast_node *ast = malloc(sizeof(struct ast_node));
+
+	ast->type = AST_NUMBER;
+	ast->number = number;
+
+	return ast;
+}
+
+struct ast_node *ast_variable_new(char *variable) {
+	struct ast_node *ast = malloc(sizeof(struct ast_node));
+
+	ast->type = AST_VARIABLE;
+	ast->variable = variable;
+
+	return ast;
+}
+
 struct ast_node *ast_binary_new(
 	struct ast_node *left, struct ast_node *right, enum ast_operation op
 ) {
@@ -13,15 +31,6 @@ struct ast_node *ast_binary_new(
 	ast->binary.left = left;
 	ast->binary.right = right;
 	ast->binary.op = op;
-
-	return ast;
-}
-
-struct ast_node *ast_number_new(int number) {
-	struct ast_node *ast = malloc(sizeof(struct ast_node));
-
-	ast->type = AST_NUMBER;
-	ast->number = number;
 
 	return ast;
 }
@@ -49,6 +58,18 @@ struct ast_node *ast_statements_add(
 	return ast;
 }
 
+struct ast_node *ast_initialize_new(
+	struct ast_node *variable, struct ast_node *expression
+) {
+	struct ast_node *ast = malloc(sizeof(struct ast_node));
+
+	ast->type = AST_INITIALIZE;
+	ast->initialize.variable = variable;
+	ast->initialize.expression = expression;
+
+	return ast;
+}
+
 void ast_print_indent(unsigned int level) {
 	for (int i = 0; i < level; i++) {
 		printf("  ");
@@ -57,6 +78,14 @@ void ast_print_indent(unsigned int level) {
 
 void ast_print_level(struct ast_node *ast, unsigned int level) {
 	switch (ast->type) {
+		case AST_NUMBER:
+			ast_print_indent(level);
+			printf("num: %i\n", ast->number);
+			break;
+		case AST_VARIABLE:
+			ast_print_indent(level);
+			printf("var: %s\n", ast->variable);
+			break;
 		case AST_BINARY:
 			ast_print_indent(level);
 			printf("bin: ");
@@ -80,18 +109,19 @@ void ast_print_level(struct ast_node *ast, unsigned int level) {
 			printf("right:\n");
 			ast_print_level(ast->binary.right, level + 2);
 			break;
-		case AST_NUMBER:
-			ast_print_indent(level);
-			printf("num: %i\n", ast->number);
-			break;
 		case AST_STATEMENTS:
 			ast_print_indent(level);
-			printf("stm:\n");
+			printf("stm: %i\n", ast->statements.len);
 
 			for (int i = 0; i < ast->statements.len; i++) {
 				ast_print_level(*(ast->statements.nodes + i), level + 1);
 			}
-
+			break;
+		case AST_INITIALIZE:
+			ast_print_indent(level);
+			printf("init:\n");
+			ast_print_level(ast->initialize.variable, level + 1);
+			ast_print_level(ast->initialize.expression, level + 1);
 			break;
 	}
 }

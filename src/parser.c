@@ -6,10 +6,12 @@
 #include "token.h"
 
 struct ast_node *parse_program(struct lexer *lexer);
+struct ast_node *parse_initializer(struct lexer *lexer);
 struct ast_node *parse_expression(struct lexer *lexer);
 struct ast_node *parse_term(struct lexer *lexer);
 struct ast_node *parse_factor(struct lexer *lexer);
 struct ast_node *parse_number(struct lexer *lexer);
+struct ast_node *parse_variable(struct lexer *lexer);
 
 struct ast_node *parse(struct lexer *lexer) {
 	return parse_program(lexer);
@@ -27,7 +29,12 @@ struct ast_node *parse_program(struct lexer *lexer) {
 			continue;
 		}
 
-		struct ast_node *statement = parse_expression(lexer);
+		struct ast_node *statement = NULL;
+
+		if (token.type == LET)
+			statement = parse_initializer(lexer);
+		else
+			statement = parse_expression(lexer);
 
 		if (statement == NULL)
 			return NULL;
@@ -36,6 +43,32 @@ struct ast_node *parse_program(struct lexer *lexer) {
 
 		token = lexer_peek(lexer);
 	}
+
+	return ast;
+}
+
+struct ast_node *parse_initializer(struct lexer *lexer) {
+	if (lexer_peek(lexer).type != LET)
+		return NULL;
+
+	lexer_consume(lexer);
+
+	struct ast_node *var = parse_variable(lexer);
+
+	if (var == NULL)
+		return NULL;
+
+	if (lexer_peek(lexer).type != BE)
+		return NULL;
+
+	lexer_consume(lexer);
+
+	struct ast_node *expr = parse_expression(lexer);
+
+	if (expr == NULL)
+		return NULL;
+
+	struct ast_node *ast = ast_initialize_new(var, expr);
 
 	return ast;
 }
@@ -95,7 +128,14 @@ struct ast_node *parse_term(struct lexer *lexer) {
 }
 
 struct ast_node *parse_factor(struct lexer *lexer) {
-	struct ast_node *ast = parse_number(lexer);
+	struct token t = lexer_peek(lexer);
+
+	struct ast_node *ast = NULL;
+
+	if (t.type == NUMBER)
+		ast = parse_number(lexer);
+	else
+		ast = parse_variable(lexer);
 
 	return ast;
 }
@@ -119,6 +159,23 @@ struct ast_node *parse_number(struct lexer *lexer) {
 	}
 
 	struct ast_node *ast = ast_number_new(atoi(num.value));
+
+	return ast;
+}
+
+struct ast_node *parse_variable(struct lexer *lexer) {
+	struct token var = lexer_next(lexer);
+
+	// can't use keywords as variable name
+	if (var.type != UNKNOWN) {
+		fprintf(stderr, "%i:%i '%s' ", var.line, var.column, var.value);
+		fprintf(stderr, "is a registered keyword and ");
+		fprintf(stderr, "cannot be used as a variable name\n");
+
+		return NULL;
+	}
+
+	struct ast_node *ast = ast_variable_new(var.value);
 
 	return ast;
 }

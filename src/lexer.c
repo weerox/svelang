@@ -101,6 +101,10 @@ struct token lexer_next(struct lexer *lexer) {
 		token.type = MINUS;
 	} else if (strcmp(t, "gånger") == 0) {
 		token.type = MULTIPLICATION;
+	} else if (strcmp(t, "låt") == 0) {
+		token.type = LET;
+	} else if (strcmp(t, "vara") == 0) {
+		token.type = BE;
 	} else {
 		token.type = UNKNOWN;
 	}

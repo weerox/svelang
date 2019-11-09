@@ -8,7 +8,9 @@ enum token_type {
 	NUMBER,
 	MULTIPLICATION,
 	PLUS,
-	MINUS
+	MINUS,
+	BE,
+	LET
 };
 
 struct token {
