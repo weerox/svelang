@@ -3,6 +3,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "interpreter.h"
+
 void usage() {
 	fprintf(stderr, "usage: svl <file>\n");
 	fprintf(stderr, "\n");
@@ -57,5 +59,7 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	return 0;
+	int result = interpret(file);
+
+	return result;
 }
