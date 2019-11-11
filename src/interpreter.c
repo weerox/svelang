@@ -125,6 +125,20 @@ int interpret_statements(struct ast_node *node, void *r) {
 }
 
 int interpret_initialize(struct ast_node *node, void *r) {
+	/* evaluate the expression before creating a variable */
+	/* in the symbol table, so that interpreter_variable will */
+	/* return an error if the variable to be initialized */
+	/* is used in the expression */
+	int *v = malloc(sizeof(int));
+
+	if (v == NULL)
+		return 1;
+
+	int res = interpret_node(node->initialize.expression, v);
+
+	if (res != 0)
+		return res;
+
 	char *name = node->initialize.variable->variable;
 
 	/* check that the variable hasn't already been declared */
@@ -140,16 +154,6 @@ int interpret_initialize(struct ast_node *node, void *r) {
 
 	if (sym == NULL)
 		return 1;
-
-	int *v = malloc(sizeof(int));
-
-	if (v == NULL)
-		return 1;
-
-	int res = interpret_node(node->initialize.expression, v);
-
-	if (res != 0)
-		return res;
 
 	sym->value = v;
 
