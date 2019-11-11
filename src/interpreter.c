@@ -81,10 +81,6 @@ printf("END interpret_variable\n");
 }
 
 int interpret_binary(struct ast_node *node, void *r) {
-	/* the expression won't be used for anything */
-	/* so there is no need to evaluate it */
-	if (r == NULL)
-		return 0;
 
 	int left, right;
 	int res = 0;
@@ -98,6 +94,13 @@ int interpret_binary(struct ast_node *node, void *r) {
 
 	if (res != 0)
 		return res;
+
+	/* the expression won't be used for anything */
+	/* so the operation doesn't need to be used for anything, */
+	/* but the expression still has to be evaluted to check if */
+	/* it contains an uninitialized variable */
+	if (r == NULL)
+		return 0;
 
 	switch (node->binary.op) {
 		case AST_ADD:
