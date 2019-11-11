@@ -34,9 +34,7 @@ int interpret(char *file) {
 
 	st = symbol_table_new();
 
-	interpret_node(ast, NULL);
-
-	return 0;
+	return interpret_node(ast, NULL);
 }
 
 int interpret_node(struct ast_node *node, void *r) {
@@ -66,6 +64,10 @@ int interpret_number(struct ast_node *node, void *r) {
 
 int interpret_variable(struct ast_node *node, void *r) {
 	struct symbol *sym = symbol_table_get(st, node->variable);
+
+	if (sym == NULL)
+		return 1;
+
 	*(int *) r = *(int *) sym->value;
 
 printf("END interpret_variable\n");
@@ -73,13 +75,23 @@ printf("END interpret_variable\n");
 }
 
 int interpret_binary(struct ast_node *node, void *r) {
+	/* the expression won't be used for anything */
+	/* so there is no need to evaluate it */
 	if (r == NULL)
 		return 0;
 
 	int left, right;
+	int res = 0;
 
-	interpret_node(node->binary.left, &left);
-	interpret_node(node->binary.right, &right);
+	res = interpret_node(node->binary.left, &left);
+
+	if (res != 0)
+		return res;
+
+	res = interpret_node(node->binary.right, &right);
+
+	if (res != 0)
+		return res;
 
 	switch (node->binary.op) {
 		case AST_ADD:
@@ -97,8 +109,11 @@ int interpret_binary(struct ast_node *node, void *r) {
 }
 
 int interpret_statements(struct ast_node *node, void *r) {
-	for (unsigned int i = 0; i < node->statements.len; i++)
-		interpret_node(*(node->statements.nodes + i), r);
+	for (unsigned int i = 0; i < node->statements.len; i++) {
+		int res = interpret_node(*(node->statements.nodes + i), r);
+		if (res != 0)
+			return res;
+	}
 
 	return 0;
 }
@@ -108,9 +123,18 @@ int interpret_initialize(struct ast_node *node, void *r) {
 
 	struct symbol *sym = symbol_table_put(st, name);
 
+	if (sym == NULL)
+		return 1;
+
 	int *v = malloc(sizeof(int));
 
-	interpret_node(node->initialize.expression, v);
+	if (v == NULL)
+		return 1;
+
+	int res = interpret_node(node->initialize.expression, v);
+
+	if (res != 0)
+		return res;
 
 	sym->value = v;
 
