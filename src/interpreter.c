@@ -65,8 +65,14 @@ int interpret_number(struct ast_node *node, void *r) {
 int interpret_variable(struct ast_node *node, void *r) {
 	struct symbol *sym = symbol_table_get(st, node->variable);
 
-	if (sym == NULL)
+	/* symbol_table_get returns NULL if the variable */
+	/* hasn't been declared */
+	if (sym == NULL) {
+		fprintf(stderr,
+			"the variable '%s' hasn't been declared\n", node->variable
+		);
 		return 1;
+	}
 
 	*(int *) r = *(int *) sym->value;
 
@@ -120,6 +126,15 @@ int interpret_statements(struct ast_node *node, void *r) {
 
 int interpret_initialize(struct ast_node *node, void *r) {
 	char *name = node->initialize.variable->variable;
+
+	/* check that the variable hasn't already been declared */
+	if (symbol_table_get(st, name) != NULL) {
+		fprintf(stderr,
+			"the variable '%s' has already been declared\n",
+			node->initialize.variable->variable
+		);
+		return 1;
+	}
 
 	struct symbol *sym = symbol_table_put(st, name);
 
