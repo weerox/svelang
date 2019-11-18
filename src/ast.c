@@ -3,11 +3,13 @@
 
 #include "ast.h"
 #include "lexer.h"
+#include "visitor.h"
 
 struct ast_node *ast_number_new(int number) {
 	struct ast_node *ast = malloc(sizeof(struct ast_node));
 
 	ast->type = AST_NUMBER;
+	ast->visit = visit_number;
 	ast->number = number;
 
 	return ast;
@@ -17,6 +19,7 @@ struct ast_node *ast_variable_new(char *variable) {
 	struct ast_node *ast = malloc(sizeof(struct ast_node));
 
 	ast->type = AST_VARIABLE;
+	ast->visit = visit_variable;
 	ast->variable = variable;
 
 	return ast;
@@ -28,6 +31,7 @@ struct ast_node *ast_binary_new(
 	struct ast_node *ast = malloc(sizeof(struct ast_node));
 
 	ast->type = AST_BINARY;
+	ast->visit = visit_binary;
 	ast->binary.left = left;
 	ast->binary.right = right;
 	ast->binary.op = op;
@@ -39,6 +43,7 @@ struct ast_node *ast_statements_new() {
 	struct ast_node *ast = malloc(sizeof(struct ast_node));
 
 	ast->type = AST_STATEMENTS;
+	ast->visit = visit_statements;
 	ast->statements.len = 0;
 	ast->statements.nodes = NULL;
 
@@ -64,6 +69,7 @@ struct ast_node *ast_initialize_new(
 	struct ast_node *ast = malloc(sizeof(struct ast_node));
 
 	ast->type = AST_INITIALIZE;
+	ast->visit = visit_initialize;
 	ast->initialize.variable = variable;
 	ast->initialize.expression = expression;
 

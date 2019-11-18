@@ -1,6 +1,8 @@
 #ifndef SVELANG_AST_H
 #define SVELANG_AST_H
 
+#include <llvm-c/Core.h>
+
 #include "lexer.h"
 
 enum ast_type {
@@ -19,6 +21,7 @@ enum ast_operation {
 
 struct ast_node {
 	enum ast_type type;
+	LLVMValueRef (*visit)(struct ast_node *);
 	union {
 		int number;
 		char *variable;

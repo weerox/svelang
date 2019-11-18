@@ -1,9 +1,11 @@
 #ifndef SVELANG_SYMBOL_H
 #define SVELANG_SYMBOL_H
 
+#include <llvm-c/Core.h>
+
 struct symbol {
 	char *name;
-	void *value;
+	LLVMValueRef value;
 };
 
 struct symbol_table_node {
