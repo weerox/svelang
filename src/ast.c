@@ -76,6 +76,25 @@ struct ast_node *ast_initialize_new(
 	return ast;
 }
 
+struct ast_node *ast_write_newline_new() {
+	struct ast_node *ast = malloc(sizeof(struct ast_node));
+
+	ast->type = AST_WRITE_NEWLINE;
+	ast->visit = visit_write_newline;
+
+	return ast;
+}
+
+struct ast_node *ast_write_new(struct ast_node *expression) {
+	struct ast_node *ast = malloc(sizeof(struct ast_node));
+
+	ast->type = AST_WRITE;
+	ast->visit = visit_write;
+	ast->write.expression = expression;
+
+	return ast;
+}
+
 void ast_print_indent(unsigned int level) {
 	for (int i = 0; i < level; i++) {
 		printf("  ");
@@ -128,6 +147,15 @@ void ast_print_level(struct ast_node *ast, unsigned int level) {
 			printf("init:\n");
 			ast_print_level(ast->initialize.variable, level + 1);
 			ast_print_level(ast->initialize.expression, level + 1);
+			break;
+		case AST_WRITE_NEWLINE:
+			ast_print_indent(level);
+			printf("write newline\n");
+			break;
+		case AST_WRITE:
+			ast_print_indent(level);
+			printf("write:\n");
+			ast_print_level(ast->write.expression, level + 1);
 			break;
 	}
 }

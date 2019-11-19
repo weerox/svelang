@@ -105,6 +105,12 @@ struct token lexer_next(struct lexer *lexer) {
 		token.type = LET;
 	} else if (strcmp(t, "vara") == 0) {
 		token.type = BE;
+	} else if (strcmp(t, "skriv") == 0) {
+		token.type = WRITE;
+	} else if (strcmp(t, "ny") == 0) {
+		token.type = NEW;
+	} else if (strcmp(t, "rad") == 0) {
+		token.type = LINE;
 	} else {
 		token.type = UNKNOWN;
 	}

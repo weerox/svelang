@@ -19,4 +19,9 @@ struct symbol_table *st;
 
 LLVMBuilderRef builder;
 
+/* useful printf variables */
+LLVMValueRef pf;    /* the printf function */
+LLVMValueRef pf_nl; /* pointer to '\n' string */
+LLVMValueRef pf_i;  /* pointer to '%i' string */
+
 #endif /* SVELANG_VISITOR_H */

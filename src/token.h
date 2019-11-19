@@ -10,7 +10,10 @@ enum token_type {
 	PLUS,
 	MINUS,
 	BE,
-	LET
+	LET,
+	WRITE,
+	NEW,
+	LINE
 };
 
 struct token {

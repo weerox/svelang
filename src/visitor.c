@@ -91,3 +91,20 @@ LLVMValueRef visit_initialize(struct ast_node *node) {
 
 	return NULL;
 }
+
+LLVMValueRef visit_write_newline(struct ast_node *node) {
+	LLVMBuildCall(builder, pf, &pf_nl, 1, "printf_nl");
+
+	return NULL;
+}
+
+LLVMValueRef visit_write(struct ast_node *node) {
+	LLVMValueRef args[2];
+
+	args[0] = pf_i;
+	args[1] = visit(node->write.expression);
+
+	LLVMBuildCall(builder, pf, args, 2, "printf_i");
+
+	return NULL;
+}

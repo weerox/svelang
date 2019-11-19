@@ -10,7 +10,9 @@ enum ast_type {
 	AST_VARIABLE,
 	AST_BINARY,
 	AST_STATEMENTS,
-	AST_INITIALIZE
+	AST_INITIALIZE,
+	AST_WRITE_NEWLINE,
+	AST_WRITE
 };
 
 enum ast_operation {
@@ -38,6 +40,9 @@ struct ast_node {
 			struct ast_node *variable;
 			struct ast_node *expression;
 		} initialize;
+		struct {
+			struct ast_node *expression;
+		} write;
 	};
 };
 
@@ -53,6 +58,8 @@ struct ast_node *ast_statements_add(
 struct ast_node *ast_initialize_new(
 	struct ast_node *variable, struct ast_node *expression
 );
+struct ast_node *ast_write_newline_new();
+struct ast_node *ast_write_new(struct ast_node *expression);
 
 void ast_print(struct ast_node *ast);
 

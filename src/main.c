@@ -94,6 +94,20 @@ int main(int argc, char **argv) {
 
 	st = symbol_table_new();
 
+	/* Create printf prototype */
+	LLVMTypeRef pf_pt = LLVMPointerType(LLVMInt8Type(), 0);
+	LLVMTypeRef pf_t = LLVMFunctionType(
+		LLVMInt16Type(),
+		&pf_pt,
+		0, 1
+	);
+
+	pf = LLVMAddFunction(module, "printf", pf_t);
+
+	/* create global strings */
+	pf_nl = LLVMBuildGlobalStringPtr(builder, "\n", "nl_str");
+	pf_i = LLVMBuildGlobalStringPtr(builder, "%i", "i_str");
+
 	visit(ast);
 
 	LLVMBuildRetVoid(builder);

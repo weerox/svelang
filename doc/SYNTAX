@@ -1,15 +1,19 @@
 ; Unless otherwise noted, 1*SP is placed between all rules
 
-program = *(initializer / expression)
+program = *(initializer / expression / write)
 initializer = LET variable BE expression
 expression = term *((PLUS / MINUS) term)
 term = factor *(MULTIPLICATION factor)
 factor = number / variable
 number = 1*DIGIT
 variable = 1*(ALPHA / DIGIT / "å" / "ä" / "ö")
+write = WRITE (NEW LINE / expression)
 
 LET = "låt"
 BE = "vara"
 PLUS = "plus"
 MINUS = "minus"
 MULTIPLICATION = "gånger"
+WRITE = "skriv"
+NEW = "ny"
+LINE = "rad"

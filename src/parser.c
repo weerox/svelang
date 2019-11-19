@@ -12,6 +12,7 @@ struct ast_node *parse_term(struct lexer *lexer);
 struct ast_node *parse_factor(struct lexer *lexer);
 struct ast_node *parse_number(struct lexer *lexer);
 struct ast_node *parse_variable(struct lexer *lexer);
+struct ast_node *parse_write(struct lexer *lexer);
 
 struct ast_node *parse(struct lexer *lexer) {
 	return parse_program(lexer);
@@ -33,6 +34,8 @@ struct ast_node *parse_program(struct lexer *lexer) {
 
 		if (token.type == LET)
 			statement = parse_initializer(lexer);
+		else if (token.type == WRITE)
+			statement = parse_write(lexer);
 		else
 			statement = parse_expression(lexer);
 
@@ -178,4 +181,29 @@ struct ast_node *parse_variable(struct lexer *lexer) {
 	struct ast_node *ast = ast_variable_new(var.value);
 
 	return ast;
+}
+
+struct ast_node *parse_write(struct lexer *lexer) {
+	if (lexer_peek(lexer).type != WRITE)
+		return NULL;
+
+	lexer_consume(lexer);
+
+	if (lexer_peek(lexer).type == NEW) {
+		lexer_consume(lexer);
+		if (lexer_peek(lexer).type == LINE) {
+			lexer_consume(lexer);
+
+			struct ast_node *ast = ast_write_newline_new();
+			return ast;
+		} else {
+			fprintf(stderr, "expected line\n");
+			return NULL;
+		}
+	} else {
+		struct ast_node *expression = parse_expression(lexer);
+		struct ast_node *ast = ast_write_new(expression);
+		return ast;
+	}
+	return NULL;
 }
